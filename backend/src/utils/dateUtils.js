@@ -26,8 +26,27 @@ function isBeyondTwoWeeks(dateString) {
   return inputDate > twoWeeksLater;
 }
 
+function normalizeTime(time) {
+
+  if (!time) return time;
+
+  const map = {
+    "9 AM": "9:00 AM",
+    "10 AM": "10:00 AM",
+    "11 AM": "11:00 AM",
+    "12 PM": "12:00 PM",
+    "2 PM": "2:00 PM",
+    "3 PM": "3:00 PM",
+    "4 PM": "4:00 PM",
+    "5 PM": "5:00 PM"
+  };
+
+  return map[time] || time;
+}
+
 module.exports = {
   isSunday,
   isPastDate,
-  isBeyondTwoWeeks
+  isBeyondTwoWeeks,
+  normalizeTime
 };

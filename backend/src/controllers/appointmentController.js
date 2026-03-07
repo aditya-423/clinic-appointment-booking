@@ -1,4 +1,4 @@
-const { isSunday, isPastDate, isBeyondTwoWeeks } = require("../utils/dateUtils");
+const { isSunday, isPastDate, isBeyondTwoWeeks, normalizeTime } = require("../utils/dateUtils");
 
 // In-memory database
 let appointments = [];
@@ -26,28 +26,9 @@ const getSlots = (req, res) => {
     });
   }
 
-  if (isSunday(date)) {
-    return res.json({
-      message: "Clinic is closed on Sundays",
-      availableSlots: []
-    });
-  }
-
-  if (isPastDate(date)) {
-    return res.status(400).json({
-        message: "Cannot fetch slots for past dates"
-    });
-  }
-
-  if (isBeyondTwoWeeks(date)) {
-    return res.status(400).json({
-        message: "Slots are only available for the next 14 days"
-    });
-  }
-
   const bookedSlots = appointments
     .filter(a => a.date === date)
-    .map(a => a.time);
+    .map(a => normalizeTime(a.time));
 
   const availableSlots = slots.filter(
     slot => !bookedSlots.includes(slot)
@@ -57,6 +38,7 @@ const getSlots = (req, res) => {
     date,
     availableSlots
   });
+
 };
 
 
@@ -88,9 +70,9 @@ const bookAppointment = (req, res) => {
       message: "Clinic is closed on Sundays"
     });
   }
-
+  const normalizedTime = normalizeTime(time);
   const alreadyBooked = appointments.find(
-    a => a.date === date && a.time === time
+    a => a.date === date && a.time === normalizedTime
   );
 
   if (alreadyBooked) {
@@ -100,12 +82,13 @@ const bookAppointment = (req, res) => {
     });
   }
 
+  
   const appointment = {
     id: appointments.length + 1,
     name,
     symptoms,
     date,
-    time,
+    time: normalizedTime,
     status: "Confirmed"
   };
 
