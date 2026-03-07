@@ -1,25 +1,11 @@
-const DEFAULT_BOLNA_URL = 'https://bolna.ai/a/d46dcef7-19bf-443f-af1c-3bc1e1721bc0'
+const DEFAULT_RECEPTION_NUMBER = '+12675515363'
 
-function resolveBolnaUrl() {
-  const configuredUrl = import.meta.env.VITE_BOLNA_AGENT_URL
-  const configuredAgentId = import.meta.env.VITE_BOLNA_AGENT_ID
-
-  if (configuredUrl) {
-    return configuredUrl
-  }
-
-  if (configuredAgentId) {
-    return `https://bolna.ai/a/${configuredAgentId}`
-  }
-
-  return DEFAULT_BOLNA_URL
-}
-
-const BOLNA_AGENT_URL = resolveBolnaUrl()
+const configuredNumber = import.meta.env.VITE_AI_RECEPTION_NUMBER
+const receptionNumber = configuredNumber || DEFAULT_RECEPTION_NUMBER
 
 export default function AIReceptionist() {
   const startCall = () => {
-    window.open(BOLNA_AGENT_URL, '_blank', 'noopener,noreferrer')
+    window.location.href = `tel:${receptionNumber}`
   }
 
   return (
@@ -32,7 +18,7 @@ export default function AIReceptionist() {
           Book Appointment via Voice AI
         </h1>
         <p className="mx-auto mt-3 max-w-md text-slate-600">
-          Start a conversation with our AI receptionist to schedule your
+          Start a phone call with our AI receptionist to schedule your
           appointment.
         </p>
 
@@ -43,6 +29,11 @@ export default function AIReceptionist() {
         >
           Start AI Call
         </button>
+
+        <p className="mt-4 text-sm text-slate-500">
+          Calling:{' '}
+          <span className="font-semibold text-slate-700">{receptionNumber}</span>
+        </p>
       </section>
     </main>
   )
